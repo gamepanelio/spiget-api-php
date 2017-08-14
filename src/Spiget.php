@@ -39,15 +39,20 @@ class Spiget
     /**
      * Spiget constructor.
      * @param string $userAgent
+     * @param HttpClient|null $httpClient
      */
-    public function __construct($userAgent = self::DEFAULT_USER_AGENT)
+    public function __construct($userAgent = self::DEFAULT_USER_AGENT, HttpClient $httpClient = null)
     {
+        if (!$httpClient instanceof HttpClient) {
+            $httpClient = HttpClientDiscovery::find();
+        }
+
         $this->uri = UriFactoryDiscovery::find()->createUri(self::API_HOST)
             ->withHost(self::API_HOST)
             ->withScheme(self::API_SCHEME)
             ->withPath(self::API_BASE);
-        $this->httpClient = HttpClientDiscovery::find();
         $this->userAgent = $userAgent;
+        $this->httpClient = $httpClient;
     }
 
     /**
