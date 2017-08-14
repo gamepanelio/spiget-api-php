@@ -1,6 +1,6 @@
 <?php
 
-namespace Gamepanelio\SpigetApi\Exception;
+namespace GamePanelio\SpigetApi\Exception;
 
 class ApiCommunicationException extends \RuntimeException
 {

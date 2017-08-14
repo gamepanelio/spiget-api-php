@@ -1,8 +1,8 @@
 <?php
 
-namespace Gamepanelio\SpigetApi;
+namespace GamePanelio\SpigetApi;
 
-use Gamepanelio\SpigetApi\Exception\ApiCommunicationException;
+use GamePanelio\SpigetApi\Exception\ApiCommunicationException;
 use Http\Client\Exception\TransferException;
 use Http\Client\HttpClient;
 use Http\Discovery\HttpClientDiscovery;
