@@ -29,7 +29,7 @@ use GamePanelio\SpigetApi\Spiget;
 
 $spiget = new Spiget("My_cool_user_agent/1.0");
 
-$spiget->getResourceSearch(
+$response = $spiget->getResourceSearch(
     'search_param',
     [
         /* ... additional parameters ... */
@@ -39,11 +39,24 @@ $spiget->getResourceSearch(
 
 ### Return Data
 
-Each method returns the response from the API in a `array` format (except for downloads which return a PSR-7 stream).
+Each method returns a PSR-7 Response.
+
+```php
+$response = $spiget->getResourcesList();
+
+// To get the response data
+var_dump($spiget->getResponseBodyFromJson($response));
+// or
+var_dump(json_decode($response->getBody(), true));
+
+
+// To get the page count, etc
+var_dump($response->getHeaderLine('X-Page-Count'));
+```
 
 ### API Errors and Exceptions
 
-Any response which is not successful (HTTP code >=200<300) will throw a `ApiCommunicationException`.
+Any response which is not successful (HTTP code <200>=300) will throw a `ApiCommunicationException`.
 
 If you are using a library that throws PSR-7 errors for such responses (for example, Guzzle), they will be wrapped and
  you can access the PSR-7 exception via the `->getPrevious()` method.

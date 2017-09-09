@@ -10,6 +10,7 @@ use Http\Discovery\MessageFactoryDiscovery;
 use Http\Discovery\StreamFactoryDiscovery;
 use Http\Discovery\UriFactoryDiscovery;
 use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -81,10 +82,9 @@ class Spiget
 
     /**
      * @param RequestInterface $request
-     * @param bool $decodeJson
-     * @return array|StreamInterface
+     * @return ResponseInterface
      */
-    private function sendRequest(RequestInterface $request, $decodeJson = true)
+    private function sendRequest(RequestInterface $request)
     {
         try {
             $response = $this->httpClient->sendRequest($request);
@@ -97,19 +97,27 @@ class Spiget
                 );
             }
 
-            if ($decodeJson) {
-                return json_decode($response->getBody(), true);
-            } else {
-                return $response->getBody();
-            }
+            return $response;
         } catch (TransferException $e) {
             throw ApiCommunicationException::wrap($e);
         }
     }
 
     /**
+     * @param ResponseInterface $response
+     * @param bool $assoc
+     * @param int $depth
+     * @param int $options
+     * @return mixed
+     */
+    public function getResponseBodyFromJson(ResponseInterface $response, $assoc = true, $depth = 512, $options = 0)
+    {
+        return json_decode($response->getBody(), $assoc, $depth, $options);
+    }
+
+    /**
      * @param array $parameters
-     * @return array
+     * @return ResponseInterface
      */
     public function getAuthorList($parameters = [])
     {
@@ -125,7 +133,7 @@ class Spiget
 
     /**
      * @param $author
-     * @return array
+     * @return ResponseInterface
      */
     public function getAuthorDetails($author)
     {
@@ -141,7 +149,7 @@ class Spiget
     /**
      * @param $author
      * @param array $parameters
-     * @return array
+     * @return ResponseInterface
      */
     public function getAuthorResources($author, $parameters = [])
     {
@@ -158,7 +166,7 @@ class Spiget
     /**
      * @param $author
      * @param array $parameters
-     * @return array
+     * @return ResponseInterface
      */
     public function getAuthorReviews($author, $parameters = [])
     {
@@ -174,7 +182,7 @@ class Spiget
 
     /**
      * @param array $parameters
-     * @return array
+     * @return ResponseInterface
      */
     public function getCategoryList($parameters = [])
     {
@@ -190,7 +198,7 @@ class Spiget
 
     /**
      * @param $category
-     * @return array
+     * @return ResponseInterface
      */
     public function getCategoryDetails($category)
     {
@@ -205,7 +213,7 @@ class Spiget
 
     /**
      * @param array $parameters
-     * @return array
+     * @return ResponseInterface
      */
     public function getCategoryResources($category, $parameters = [])
     {
@@ -221,7 +229,7 @@ class Spiget
 
     /**
      * @param array $parameters
-     * @return array
+     * @return ResponseInterface
      */
     public function getResourcesList($parameters = [])
     {
@@ -238,7 +246,7 @@ class Spiget
     /**
      * @param $versions
      * @param array $parameters
-     * @return array
+     * @return ResponseInterface
      */
     public function getResourcesForVersions($versions, $parameters = [])
     {
@@ -254,7 +262,7 @@ class Spiget
 
     /**
      * @param array $parameters
-     * @return array
+     * @return ResponseInterface
      */
     public function getNewResources($parameters = [])
     {
@@ -270,7 +278,7 @@ class Spiget
 
     /**
      * @param $resource
-     * @return array
+     * @return ResponseInterface
      */
     public function getResourceDetails($resource)
     {
@@ -285,7 +293,7 @@ class Spiget
 
     /**
      * @param $resource
-     * @return array
+     * @return ResponseInterface
      */
     public function getResourceAuthor($resource)
     {
@@ -301,7 +309,7 @@ class Spiget
     /**
      * @param $resource
      * @param array $parameters
-     * @return array
+     * @return ResponseInterface
      */
     public function getResourceDownload($resource, $parameters = [])
     {
@@ -318,7 +326,7 @@ class Spiget
     /**
      * @param $resource
      * @param array $parameters
-     * @return array
+     * @return ResponseInterface
      */
     public function getResourceReviews($resource, $parameters = [])
     {
@@ -335,7 +343,7 @@ class Spiget
     /**
      * @param $resource
      * @param array $parameters
-     * @return array
+     * @return ResponseInterface
      */
     public function getResourceUpdates($resource, $parameters = [])
     {
@@ -352,7 +360,7 @@ class Spiget
     /**
      * @param $resource
      * @param array $parameters
-     * @return array
+     * @return ResponseInterface
      */
     public function getResourceVersions($resource, $parameters = [])
     {
@@ -369,7 +377,7 @@ class Spiget
     /**
      * @param $resource
      * @param $version
-     * @return array
+     * @return ResponseInterface
      */
     public function getResourceVersionDownload($resource, $version = 'latest')
     {
@@ -381,13 +389,13 @@ class Spiget
                 )
             );
 
-        return $this->sendRequest($request, false);
+        return $this->sendRequest($request);
     }
 
     /**
      * @param $query
      * @param array $parameters
-     * @return array
+     * @return ResponseInterface
      */
     public function getAuthorSearch($query, $parameters = [])
     {
@@ -404,7 +412,7 @@ class Spiget
     /**
      * @param $query
      * @param array $parameters
-     * @return array
+     * @return ResponseInterface
      */
     public function getResourceSearch($query, $parameters = [])
     {
@@ -419,7 +427,7 @@ class Spiget
     }
 
     /**
-     * @return array
+     * @return ResponseInterface
      */
     public function getApiStatus()
     {
@@ -433,7 +441,7 @@ class Spiget
     }
 
     /**
-     * @return array
+     * @return ResponseInterface
      */
     public function getWebhookEvents()
     {
@@ -448,7 +456,7 @@ class Spiget
 
     /**
      * @param $webhookId
-     * @return array
+     * @return ResponseInterface
      */
     public function getWebhookStatus($webhookId)
     {
@@ -463,7 +471,7 @@ class Spiget
 
     /**
      * @param array $parameters
-     * @return array
+     * @return ResponseInterface
      */
     public function registerWebhook($parameters = [])
     {
@@ -483,7 +491,7 @@ class Spiget
     /**
      * @param $webhookId
      * @param $secret
-     * @return array
+     * @return ResponseInterface
      */
     public function deleteWebhook($webhookId, $secret)
     {
